@@ -1,0 +1,43 @@
+import mechanize
+from bs4 import BeautifulSoup
+
+url="https://www.findandtrace.com/trace-mobile-number-location"
+
+brow=mechanize.Browser()
+brow.set_handle_robots(False)
+brow.open(url)
+brow.select_form(name="trace")
+brow["mobilenumber"]=str(input("Enter the mobile number : "))
+result=brow.submit()
+soup=BeautifulSoup(result.read(),"html.parser")
+table_extr=soup.find_all("table",class_="shop_table")
+try:
+    data_extracted=table_extr[0].find("tfoot")
+except:
+    print("This Number can't be tracked!!")
+count=0
+for tr in data_extracted:
+    count+=1
+    if count in (1,2,4,6,8,10):
+        continue 
+    th=tr.find("th")
+    td=tr.find("td")
+    try:
+        print(th.text,td.text)
+    except:
+        print("This data cannot be retrieved")
+    
+try:
+    data_extracted=table_extr[1].find("tfoot")
+except:
+    print("This Number can't be tracked!!")
+count2=0
+for tr in data_extracted:
+    count2+=1
+    if count2 in (2,4,8,10,12,14,16,18,20):
+        th=tr.find("th")
+        td=tr.find("td")
+        try:
+            print(th.text,td.text)
+        except:
+            print("This data cannot be retrieved")
